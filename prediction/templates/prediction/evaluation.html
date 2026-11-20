@@ -1,0 +1,544 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluasi Model | PsycoPredict</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f8fafc;
+            color: #1e293b;
+            font-family: Arial, sans-serif;
+        }
+
+        .sidebar {
+            width: 245px;
+            min-height: 100vh;
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding: 25px 18px;
+        }
+
+        .brand {
+            color: #2563eb;
+            font-size: 23px;
+            font-weight: 700;
+            margin-bottom: 40px;
+        }
+
+        .menu-title {
+            color: #94a3b8;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 20px 10px 10px;
+        }
+
+        .nav-link {
+            color: #64748b;
+            padding: 12px 14px;
+            border-radius: 9px;
+            margin-bottom: 6px;
+            text-decoration: none;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: #eff6ff;
+            color: #2563eb;
+            font-weight: 600;
+        }
+
+        .main-content {
+            margin-left: 245px;
+            padding: 30px;
+        }
+
+        .page-heading {
+            font-weight: 700;
+        }
+
+        .page-description {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .stat-card, .content-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 13px;
+            padding: 22px;
+            height: 100%;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .stat-number {
+            font-size: 29px;
+            font-weight: 700;
+            color: #2563eb;
+            margin-top: 12px;
+        }
+
+        .stat-icon {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #eff6ff;
+            color: #2563eb;
+            border-radius: 10px;
+            font-size: 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+
+        .table th {
+            color: #64748b;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .table td {
+            font-size: 14px;
+            vertical-align: middle;
+        }
+
+        .confusion-table th,
+        .confusion-table td {
+            text-align: center;
+            padding: 14px;
+        }
+
+        .confusion-table thead th {
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+
+        .info-card {
+            background: #eff6ff;
+            border: 1px solid #dbeafe;
+            border-radius: 12px;
+            padding: 20px;
+            color: #475569;
+            line-height: 1.7;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+
+    <div class="brand">✦ PsycoPredict</div>
+
+    <div class="menu-title">MENU UTAMA</div>
+
+    <nav class="nav flex-column">
+
+        <a href="{% url 'dashboard' %}" class="nav-link">
+            ▦ &nbsp; Dashboard
+        </a>
+
+        <a href="{% url 'prediction' %}" class="nav-link">
+            ✚ &nbsp; Prediksi
+        </a>
+
+        <a href="{% url 'history' %}" class="nav-link">
+            ◷ &nbsp; Riwayat Prediksi
+        </a>
+
+    </nav>
+
+    <div class="menu-title">INFORMASI</div>
+
+    <nav class="nav flex-column">
+
+        <a href="{% url 'evaluation' %}" class="nav-link active">
+            ▤ &nbsp; Evaluasi Model
+        </a>
+
+        <a href="{% url 'dashboard' %}#tentang" class="nav-link">
+            ⓘ &nbsp; Tentang
+        </a>
+
+    </nav>
+
+</aside>
+
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+
+    <!-- JUDUL HALAMAN -->
+    <div class="mb-4">
+
+        <h3 class="page-heading">
+            Evaluasi Model
+        </h3>
+
+        <p class="page-description">
+            Informasi performa model Decision Tree dalam
+            mengklasifikasikan kategori kesehatan mental.
+        </p>
+
+    </div>
+
+
+    <!-- INFORMASI DATASET -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-4">
+            <div class="stat-card">
+
+                <div class="stat-label">
+                    Total Dataset
+                </div>
+
+                <div class="stat-number">
+                    {{ total_data|default:"0" }}
+                </div>
+
+                <small class="text-secondary">
+                    Jumlah keseluruhan data
+                </small>
+
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="stat-card">
+
+                <div class="stat-label">
+                    Data Training
+                </div>
+
+                <div class="stat-number">
+                    {{ total_training|default:"0" }}
+                </div>
+
+                <small class="text-secondary">
+                    80% dari dataset
+                </small>
+
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="stat-card">
+
+                <div class="stat-label">
+                    Data Testing
+                </div>
+
+                <div class="stat-number">
+                    {{ total_testing|default:"0" }}
+                </div>
+
+                <small class="text-secondary">
+                    20% dari dataset
+                </small>
+
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- METRIK EVALUASI -->
+    <h5 class="section-title mb-3">
+        Ringkasan Performa Model
+    </h5>
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-6 col-xl-3">
+            <div class="stat-card">
+
+                <div class="d-flex justify-content-between">
+                    <div class="stat-label">Accuracy</div>
+                    <div class="stat-icon">◎</div>
+                </div>
+
+                <div class="stat-number">
+                    {{ accuracy }}%
+                </div>
+
+                <small class="text-secondary">
+                    Ketepatan keseluruhan model
+                </small>
+
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="stat-card">
+
+                <div class="d-flex justify-content-between">
+                    <div class="stat-label">Precision</div>
+                    <div class="stat-icon">◉</div>
+                </div>
+
+                <div class="stat-number">
+                    {{ precision }}%
+                </div>
+
+                <small class="text-secondary">
+                    Ketepatan hasil klasifikasi
+                </small>
+
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="stat-card">
+
+                <div class="d-flex justify-content-between">
+                    <div class="stat-label">Recall</div>
+                    <div class="stat-icon">↗</div>
+                </div>
+
+                <div class="stat-number">
+                    {{ recall }}%
+                </div>
+
+                <small class="text-secondary">
+                    Kemampuan mengenali kategori
+                </small>
+
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="stat-card">
+
+                <div class="d-flex justify-content-between">
+                    <div class="stat-label">F1-Score</div>
+                    <div class="stat-icon">★</div>
+                </div>
+
+                <div class="stat-number">
+                    {{ f1_score }}%
+                </div>
+
+                <small class="text-secondary">
+                    Keseimbangan Precision dan Recall
+                </small>
+
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- TABEL CLASSIFICATION REPORT -->
+    <div class="content-card mb-4">
+
+        <h5 class="section-title">
+            Classification Report
+        </h5>
+
+        <p class="page-description">
+            Hasil evaluasi performa model berdasarkan
+            masing-masing kategori klasifikasi.
+        </p>
+
+        <div class="table-responsive">
+
+            <table class="table table-hover">
+
+                <thead>
+                    <tr>
+                        <th>Kategori</th>
+                        <th>Precision</th>
+                        <th>Recall</th>
+                        <th>F1-Score</th>
+                        <th>Support</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for item in class_metrics %}
+
+                    <tr>
+                        <td class="fw-semibold">
+                            {{ item.name }}
+                        </td>
+
+                        <td>{{ item.precision }}%</td>
+
+                        <td>{{ item.recall }}%</td>
+
+                        <td>{{ item.f1_score }}%</td>
+
+                        <td>{{ item.support }}</td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <small class="text-secondary">
+            Catatan: Nilai keseluruhan Precision, Recall,
+            dan F1-Score menggunakan Macro Average.
+        </small>
+
+    </div>
+
+
+    <!-- CONFUSION MATRIX -->
+    <div class="content-card mb-4">
+
+        <h5 class="section-title">
+            Confusion Matrix
+        </h5>
+
+        <p class="page-description">
+            Perbandingan antara kategori sebenarnya
+            dengan kategori hasil prediksi model.
+        </p>
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered confusion-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Kategori Aktual / Prediksi</th>
+
+                        {% for label in labels %}
+                            <th>{{ label }}</th>
+                        {% endfor %}
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for row in confusion_data %}
+
+                    <tr>
+
+                        <th>{{ row.actual }}</th>
+
+                        {% for value in row.values %}
+
+                            <td class="{% if forloop.parentloop.counter0 == forloop.counter0 %}table-primary fw-bold{% endif %}">
+                                {{ value }}
+                            </td>
+
+                        {% endfor %}
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div class="info-card mt-3">
+
+            <strong>Keterangan:</strong>
+
+            <ul class="mb-0 mt-2">
+
+                <li>
+                    Baris menunjukkan kategori sebenarnya.
+                </li>
+
+                <li>
+                    Kolom menunjukkan hasil prediksi model.
+                </li>
+
+                <li>
+                    Nilai diagonal menunjukkan jumlah prediksi
+                    yang diklasifikasikan dengan benar.
+                </li>
+
+                <li>
+                    Nilai di luar diagonal menunjukkan jumlah
+                    kesalahan klasifikasi.
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+
+    <!-- INFORMASI MODEL -->
+    <div class="content-card mb-4">
+
+        <h5 class="section-title">
+            Informasi Model
+        </h5>
+
+        <div class="info-card">
+
+            <p>
+                Model yang digunakan dalam sistem PsycoPredict
+                adalah algoritma <strong>Decision Tree Classifier</strong>.
+            </p>
+
+            <p>
+                Model dilatih menggunakan 18 fitur yang berkaitan
+                dengan kondisi akademik, sosial, finansial,
+                dan kebiasaan mahasiswa.
+            </p>
+
+            <p class="mb-0">
+                Pembagian dataset menggunakan 80% data training
+                dan 20% data testing dengan random state 42
+                serta stratifikasi berdasarkan kategori target.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <footer class="text-center text-secondary mt-4 small">
+        © 2026 PsycoPredict. All Rights Reserved.
+    </footer>
+
+</main>
+
+</body>
+</html>

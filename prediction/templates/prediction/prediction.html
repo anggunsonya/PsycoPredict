@@ -1,0 +1,389 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediksi | PsycoPredict</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f8fafc;
+            color: #1e293b;
+            font-family: Arial, sans-serif;
+        }
+
+/* SIDEBAR */
+.sidebar {
+    width: 245px;
+    min-height: 100vh;
+    background: white;
+    border-right: 1px solid #e2e8f0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 25px 18px;
+    z-index: 1000;
+}
+
+/* LOGO */
+.brand {
+    color: #2563eb;
+    font-size: 23px;
+    font-weight: 700;
+    margin-bottom: 40px;
+}
+
+/* JUDUL MENU */
+.menu-title {
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: bold;
+    margin: 20px 10px 10px;
+}
+
+/* LINK MENU */
+.nav-link {
+    color: #64748b;
+    padding: 12px 14px;
+    border-radius: 9px;
+    margin-bottom: 6px;
+    text-decoration: none;
+}
+
+/* HOVER DAN MENU AKTIF */
+.nav-link:hover,
+.nav-link.active {
+    background: #eff6ff;
+    color: #2563eb;
+    font-weight: 600;
+}
+
+
+        .main-content {
+            margin-left: 245px;
+            padding: 30px;
+        }
+
+        .topbar, .content-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 13px;
+            padding: 22px;
+        }
+
+        .topbar {
+            margin-bottom: 30px;
+        }
+
+        .page-heading {
+            font-weight: 700;
+        }
+
+        .page-description {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .section-title {
+            color: #2563eb;
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .form-control, .form-select {
+            padding: 11px;
+            border-color: #cbd5e1;
+            border-radius: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            border: none;
+            padding: 11px 22px;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        @media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 15px;
+    }
+}
+    </style>
+</head>
+
+<body>
+
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="brand">✦ PsycoPredict</div>
+
+    <div class="menu-title">MENU UTAMA</div>
+
+    <nav class="nav flex-column">
+        <a href="{% url 'dashboard' %}" class="nav-link">
+            ▦ &nbsp; Dashboard
+        </a>
+
+        <a href="{% url 'prediction' %}" class="nav-link active">
+            ✚ &nbsp; Prediksi
+        </a>
+
+        <a href="{% url 'history' %}" class="nav-link">
+            ◷ &nbsp; Riwayat Prediksi
+        </a>
+    </nav>
+
+    <div class="menu-title">INFORMASI</div>
+
+    <nav class="nav flex-column">
+        <a href="{% url 'evaluation' %}" class="nav-link">
+            ▤ &nbsp; Evaluasi Model
+        </a>
+
+        <a href="{% url 'dashboard' %}#tentang" class="nav-link">
+            ⓘ &nbsp; Tentang
+        </a>
+    </nav>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+
+    <div class="mb-4">
+        <h3 class="page-heading">Prediksi Kategori Kesehatan Mental</h3>
+        <p class="page-description">
+            Lengkapi informasi berikut untuk mendapatkan estimasi
+            kategori berdasarkan model Machine Learning.
+        </p>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="content-card mb-4">
+            <h5 class="section-title">1. Data Akademik dan Perguruan Tinggi</h5>
+
+            <div class="row">
+
+                <div class="col-md-6 form-group">
+                    <label class="form-label">Jenjang dan Rumpun Studi</label>
+                    <select name="jenjang_dan_rumpun_studi" class="form-select" required>
+                        <option value="">Pilih jenjang dan rumpun studi</option>
+                        {% for option in categorical_options.jenjang_dan_rumpun_studi %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label class="form-label">Status Perguruan Tinggi</label>
+                    <select name="status_perguruan_tinggi" class="form-select" required>
+                        <option value="">Pilih status perguruan tinggi</option>
+                        {% for option in categorical_options.status_perguruan_tinggi %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label class="form-label">Provinsi Domisili Kampus</label>
+                    <select name="provinsi_domisili_kampus" class="form-select" required>
+                        <option value="">Pilih provinsi</option>
+                        {% for option in categorical_options.provinsi_domisili_kampus %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label class="form-label">Semester Studi</label>
+                    <input type="number" name="semester_studi"
+                           class="form-control" min="1" max="20" required>
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label class="form-label">Golongan UKT</label>
+                    <select name="golongan_ukt" class="form-select" required>
+                        <option value="">Pilih golongan UKT</option>
+                        {% for option in categorical_options.golongan_ukt %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label class="form-label">Indeks Prestasi Kumulatif (IPK)</label>
+                    <input type="number" name="indeks_prestasi_kumulatif_ipk"
+                           class="form-control" min="0" max="4" step="0.01" required>
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label class="form-label">Beban SKS Semester Ini</label>
+                    <input type="number" name="beban_sks_semester_ini"
+                           class="form-control" min="0" max="30" required>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="content-card mb-4">
+            <h5 class="section-title">2. Aktivitas dan Kebiasaan Harian</h5>
+
+            <div class="row">
+
+                <div class="col-md-6 form-group">
+                    <label class="form-label">Durasi Layar Harian (Jam)</label>
+                    <input type="number" name="durasi_layar_harian_jam"
+                           class="form-control" min="0" max="24" step="0.1" required>
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label class="form-label">Durasi Tidur Harian (Jam)</label>
+                    <input type="number" name="durasi_tidur_harian_jam"
+                           class="form-control" min="0" max="24" step="0.1" required>
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label class="form-label">Kondisi Tempat Tinggal</label>
+                    <select name="kondisi_tempat_tinggal" class="form-select" required>
+                        <option value="">Pilih kondisi tempat tinggal</option>
+                        {% for option in categorical_options.kondisi_tempat_tinggal %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label class="form-label">Pengeluaran Bulanan Total (Rp)</label>
+                    <input type="number" name="pengeluaran_bulanan_total_idr"
+                           class="form-control" min="0" required>
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label class="form-label">Aktivitas Pekerjaan Sampingan</label>
+                    <select name="aktivitas_pekerjaan_sampingan" class="form-select" required>
+                        <option value="">Pilih aktivitas pekerjaan</option>
+                        {% for option in categorical_options.aktivitas_pekerjaan_sampingan %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="content-card mb-4">
+            <h5 class="section-title">3. Kondisi dan Kesejahteraan Mahasiswa</h5>
+
+            <div class="row">
+
+                <div class="col-md-6 form-group">
+                    <label class="form-label">Skor Tekanan Finansial</label>
+                    <input type="number" name="skor_tekanan_finansial"
+                           class="form-control" step="any" required>
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label class="form-label">Skor Kecemasan Akademik</label>
+                    <input type="number" name="skor_kecemasan_akademik"
+                           class="form-control" step="any" required>
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label class="form-label">Skor Tekanan Masa Depan Karier</label>
+                    <input type="number" name="skor_tekanan_masa_depan_karir"
+                           class="form-control" step="any" required>
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label class="form-label">Skor Kesepian dan Isolasi Sosial</label>
+                    <input type="number" name="skor_kesepian_dan_isolasi_sosial"
+                           class="form-control" step="any" required>
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label class="form-label">Frekuensi Keluhan Somatik Mingguan</label>
+                    <input type="number" name="frekuensi_keluhan_somatik_mingguan"
+                           class="form-control" step="any" required>
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label class="form-label">Akses Layanan Konseling</label>
+                    <select name="akses_layanan_konseling" class="form-select" required>
+                        <option value="">Pilih akses layanan konseling</option>
+                        {% for option in categorical_options.akses_layanan_konseling %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="d-flex gap-2 mb-4">
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">
+                Kembali
+            </a>
+
+            <button type="submit" class="btn btn-primary">
+    {% if result %}
+        Prediksi Ulang
+    {% else %}
+        Proses Prediksi
+    {% endif %}
+</button>
+
+        </div>
+
+        <div class="alert alert-info small">
+            Hasil sistem merupakan estimasi berdasarkan model dan dataset,
+            bukan diagnosis medis.
+        </div>
+
+    </form>
+
+    {% if result %}
+<div class="alert alert-primary mt-4">
+    <h4>Hasil Prediksi</h4>
+    <p>Kategori prediksi:</p>
+    <h3>{{ result }}</h3>
+
+    <small>
+        Hasil ini merupakan estimasi berdasarkan model dan dataset,
+        bukan diagnosis medis atau psikologis.
+    </small>
+</div>
+{% endif %}
+
+{% if error %}
+<div class="alert alert-danger mt-4">
+    {{ error }}
+</div>
+{% endif %}
+
+</main>
+
+</body>
+</html>
